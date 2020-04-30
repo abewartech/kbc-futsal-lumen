@@ -14,8 +14,8 @@ class TableBooking extends Migration
     public function up()
     {
         Schema::create('booking', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string("userId");
+            $table->id('id');
+            $table->foreignId("userId");
             $table->string("namaTeam");
             $table->string("date")->nullable();
             $table->string("jam")->nullable();

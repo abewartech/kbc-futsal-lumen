@@ -14,9 +14,9 @@ class TableCompletebooking extends Migration
     public function up()
     {
         Schema::create('complete_booking', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string("prevId");
-            $table->string("userId");
+            $table->id('id');
+            $table->foreignId("prevId");
+            $table->foreignId("userId");
             $table->string("namaTeam");
             $table->string("date")->nullable();
             $table->string("jam")->nullable();
