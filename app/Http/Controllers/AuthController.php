@@ -37,7 +37,7 @@ class AuthController extends Controller
         $user = User::where("email", $email)->first();
 
         if (!$user) {
-            $out = ['success' => true, 'message' => 'user tidak ditemukan', 'code' => 400];
+            $out = ['success' => false, 'message' => 'user tidak ditemukan', 'code' => 400];
             return response()->json($out);
         }
 
