@@ -32,13 +32,16 @@ class BookingController extends Controller
         $namaTeam = $request->input("namaTeam");
         $tanggal = $request->input("tanggal");
 
-        $completeBooking = BookingComplete::where('tanggal', $tanggal)->get();
+        $completeBooking = BookingComplete::whereDate('tanggal', $tanggal)->get();
         $size = count($completeBooking);
         if ($size > 0) {
-            $dates = CarbonPeriod::create($date, $endDate);
-            dd($dates);
-            for ($i = 0; $i < $size; $i++) {
-
+            $range = CarbonPeriod::create($date, $endDate);
+            foreach ($completeBooking as $i => $value) {
+                $range2 = CarbonPeriod::create($value->date, $value->endDate);
+                if (CarbonPeriod::overlaps($range, $range2)) {
+                    return response()->json(['success' => false,
+                        'message' => "Lapangan sudah dibooking, silahkan cek jadwal dahulu"]);
+                }
             }
         } else {
             $booking = new Booking;
@@ -122,7 +125,32 @@ class BookingController extends Controller
         if (!$booking) {
             $out = ['success' => false, 'message' => 'Booking Tidak Ditemukan', 'code' => 200];
         }
-        $out = ['success' => true, 'message' => $booking, 'code' => 200];
+        if ($booking->image) {
+            //remove file here
+        }
+        $booking->delete();
+
+        $completeBooking = BookingComplete::whereDate('tanggal', $booking->tanggal)->get();
+        $size = count($completeBooking);
+        if ($size > 0) {
+            $dates = CarbonPeriod::create($date, $endDate);
+            dd($dates);
+            for ($i = 0; $i < $size; $i++) {
+
+            }
+        } else {
+            $completeBooking = new BookingComplete;
+            $completeBooking->prevId = $booking->id;
+            $completeBooking->userId = $booking->userId;
+            $completeBooking->namaTeam = $booking->namaTeam;
+            $completeBooking->date = $booking->date;
+            $completeBooking->jam = $booking->jam;
+            $completeBooking->endDate = $booking->endDate;
+            $completeBooking->tanggal = $booking->tanggal;
+            $completeBooking->save();
+        }
+
+        $out = ['success' => true, 'message' => $completeBooking, 'code' => 200];
         return response()->json($out, $out['code']);
     }
 
