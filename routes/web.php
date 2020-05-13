@@ -16,10 +16,10 @@ $router->group(['middleware' => 'login'], function () use ($router) {
 
     $router->post("addbooking", "BookingController@addbooking");
     $router->post("upload", "BookingController@upload");
-    $router->post("getallbooking", "BookingController@getallbooking");
-    $router->post("getbooking/{id}", "BookingController@getbooking");
+    $router->get("getallbooking", "BookingController@getallbooking");
+    $router->get("getbooking/{id}", "BookingController@getbooking");
     $router->post("editbooking/{id}", "BookingController@editbooking");
     $router->post("deletebooking/{id}", "BookingController@deletebooking");
     $router->post("completebooking/{id}", "BookingController@completebooking");
-    $router->post("getallcompletebooking", "BookingController@getallcompletebooking");
+    $router->get("getallcompletebooking", "BookingController@getallcompletebooking");
 });
