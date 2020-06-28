@@ -66,8 +66,10 @@ class BookingController extends Controller
 
     public function upload(Request $request)
     {
-        $fileName = $request->file('images');
-        if (!$request->hasFile('images')) {
+        $fileName = $request->file('image');
+        $fileNameAsli = $request->input('fileName');
+        $id = $request->input("id");
+        if (!$request->hasFile('image')) {
             return response()->json(['success' => false,
                 'message' => "File Not Found"]);
         }
@@ -77,6 +79,9 @@ class BookingController extends Controller
         }
         $path = base_path() . '/public/images';
         $fileName->move($path, $fileName->getClientOriginalName());
+        $booking = Booking::find($id);
+        $booking->image = $fileNameAsli;
+        $booking->update();
         $out = ['success' => true, 'message' => $fileName, 'code' => 200];
         return response()->json($out, $out['code']);
     }
