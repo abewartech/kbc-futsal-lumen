@@ -82,7 +82,7 @@ class BookingController extends Controller
         $booking = Booking::find($id);
         $booking->image = $fileNameAsli;
         $booking->update();
-        $out = ['success' => true, 'message' => $fileName, 'code' => 200];
+        $out = ['success' => true, 'message' => $booking, 'code' => 200];
         return response()->json($out, $out['code']);
     }
 
