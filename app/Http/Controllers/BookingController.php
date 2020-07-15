@@ -212,7 +212,7 @@ class BookingController extends Controller
         $date = Carbon::parse($request->input("date"));
         $dateTo = Carbon::parse($request->input("dateTo"));
 
-        $completeBooking = BookingComplete::whereBetween('created_at', [$date, $dateTo])
+        $completeBooking = BookingComplete::whereBetween('created_at', [$date . " 00:00:00", $dateTo . " 23:59:59"])
             ->get();
         $out = ['success' => true, 'message' => $completeBooking, 'code' => 200];
         return response()->json($out, $out['code']);
