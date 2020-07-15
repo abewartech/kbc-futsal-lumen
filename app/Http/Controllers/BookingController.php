@@ -212,8 +212,8 @@ class BookingController extends Controller
         $date = Carbon::parse($request->input("date"));
         $dateTo = Carbon::parse($request->input("dateTo"));
 
-        $completeBooking = BookingComplete::whereDate('date', '<=', $date)
-            ->whereDate('date', '>=', $dateTo)->get();
+        $completeBooking = BookingComplete::whereDate('created_at', '<=', $date)
+            ->whereDate('created_at', '>=', $dateTo)->get();
         $out = ['success' => true, 'message' => $completeBooking, 'code' => 200];
         return response()->json($out, $out['code']);
     }
