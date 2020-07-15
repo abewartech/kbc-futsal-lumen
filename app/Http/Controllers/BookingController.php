@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use App\Models\BookingComplete;
+use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -194,6 +195,25 @@ class BookingController extends Controller
     public function getallcompletebooking()
     {
         $completeBooking = BookingComplete::all();
+        $out = ['success' => true, 'message' => $completeBooking, 'code' => 200];
+        return response()->json($out, $out['code']);
+    }
+
+    public function report(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'date' => 'required',
+            'dateTo' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => $validator->errors()->first()]);
+        }
+
+        $date = Carbon::parse($request->input("date"));
+        $dateTo = Carbon::parse($request->input("dateTo"));
+
+        $completeBooking = BookingComplete::whereDate('date', '<=', $date)
+            ->whereDate('date', '>=', $dateTo)->get();
         $out = ['success' => true, 'message' => $completeBooking, 'code' => 200];
         return response()->json($out, $out['code']);
     }
