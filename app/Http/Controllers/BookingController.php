@@ -209,10 +209,10 @@ class BookingController extends Controller
             return response()->json(['success' => false, 'message' => $validator->errors()->first()]);
         }
 
-        $date = Carbon::parse($request->input("date"));
-        $dateTo = Carbon::parse($request->input("dateTo"));
+        $date = Carbon::parse($request->input("date"))->format('Y-m-d');
+        $dateTo = Carbon::parse($request->input("dateTo"))->format('Y-m-d');
 
-        $completeBooking = BookingComplete::whereBetween('created_at', [$date . " 00:00:00", $dateTo . " 23:59:59"])
+        $completeBooking = BookingComplete::whereBetween('tanggal', [$date, $dateTo])
             ->get();
         $out = ['success' => true, 'message' => $completeBooking, 'code' => 200];
         return response()->json($out, $out['code']);
