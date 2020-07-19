@@ -23,4 +23,5 @@ $router->group(['middleware' => 'login'], function () use ($router) {
     $router->post("completebooking/{id}", "BookingController@completebooking");
     $router->get("getallcompletebooking", "BookingController@getallcompletebooking");
     $router->post("report", "BookingController@report");
+    $router->post("reportpemasukan", "BookingController@reportpemasukan");
 });

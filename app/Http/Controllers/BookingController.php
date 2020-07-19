@@ -6,6 +6,7 @@ use App\Models\Booking;
 use App\Models\BookingComplete;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
+use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -214,6 +215,25 @@ class BookingController extends Controller
 
         $completeBooking = BookingComplete::whereBetween('tanggal', [$date, $dateTo])
             ->get();
+        $out = ['success' => true, 'message' => $completeBooking, 'code' => 200];
+        return response()->json($out, $out['code']);
+    }
+
+    public function reportpemasukan(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'date' => 'required',
+            'dateTo' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => $validator->errors()->first()]);
+        }
+
+        $date = Carbon::parse($request->input("date"))->format('Y-m-d');
+        $dateTo = Carbon::parse($request->input("dateTo"))->format('Y-m-d');
+
+        $completeBooking = BookingComplete::whereBetween('tanggal', [$date, $dateTo])
+            ->groupBy('tanggal')->select(DB::raw("count(id) as jumlah"), 'tanggal')->get();
         $out = ['success' => true, 'message' => $completeBooking, 'code' => 200];
         return response()->json($out, $out['code']);
     }
