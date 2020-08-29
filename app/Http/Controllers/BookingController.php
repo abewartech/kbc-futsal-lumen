@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use App\Models\BookingComplete;
+use App\User;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use DB;
@@ -234,6 +235,44 @@ class BookingController extends Controller
 
         $completeBooking = BookingComplete::whereBetween('tanggal', [$date, $dateTo])
             ->groupBy('tanggal')->select(DB::raw("count(id) as jumlah"), 'tanggal')->get();
+        $out = ['success' => true, 'message' => $completeBooking, 'code' => 200];
+        return response()->json($out, $out['code']);
+    }
+
+    public function reportmember(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'date' => 'required',
+            'dateTo' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => $validator->errors()->first()]);
+        }
+
+        $date = Carbon::parse($request->input("date"))->format('Y-m-d');
+        $dateTo = Carbon::parse($request->input("dateTo"))->format('Y-m-d');
+
+        $completeBooking = User::where('role', 1)->whereBetween('created_at', [$date, $dateTo])
+            ->get();
+        $out = ['success' => true, 'message' => $completeBooking, 'code' => 200];
+        return response()->json($out, $out['code']);
+    }
+
+    public function reportpembayaran(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'date' => 'required',
+            'dateTo' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => $validator->errors()->first()]);
+        }
+
+        $date = Carbon::parse($request->input("date"))->format('Y-m-d');
+        $dateTo = Carbon::parse($request->input("dateTo"))->format('Y-m-d');
+
+        $completeBooking = BookingComplete::whereBetween('tanggal', [$date, $dateTo])
+            ->get();
         $out = ['success' => true, 'message' => $completeBooking, 'code' => 200];
         return response()->json($out, $out['code']);
     }
