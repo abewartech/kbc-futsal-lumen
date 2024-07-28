@@ -41,8 +41,10 @@ class BookingController extends Controller
             foreach ($completeBooking as $i => $value) {
                 $range2 = CarbonPeriod::create($value->date, $value->endDate);
                 if ($range->overlaps($range2)) {
-                    return response()->json(['success' => false,
-                        'message' => "Lapangan sudah dibooking, silahkan cek jadwal dahulu"]);
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Lapangan sudah dibooking, silahkan cek jadwal dahulu"
+                    ]);
                 }
             }
             $booking = new Booking;
@@ -69,24 +71,32 @@ class BookingController extends Controller
 
     public function upload(Request $request)
     {
-        $fileName = $request->file('image');
-        $fileNameAsli = $request->input('fileName');
         $id = $request->input("id");
         if (!$request->hasFile('image')) {
-            return response()->json(['success' => false,
-                'message' => "File Not Found"]);
+
+            return response()->json(['success' => false, 'message' => "File Not Found"]);
         }
-        if (!$fileName->isValid()) {
-            return response()->json(['success' => false,
-                'message' => "File gagal diupload"]);
+
+        $file = $request->file('image');
+
+        if (!$file->isValid()) {
+            return response()->json(['success' => false, 'message' => "File gagal diupload"]);
         }
-        $path = base_path() . '/public/images';
-        $fileName->move($path, $fileName->getClientOriginalName());
+
+        $path = public_path('images');
+        $file->move($path, $file->getClientOriginalName());
+
         $booking = Booking::find($id);
-        $booking->image = $fileNameAsli;
-        $booking->update();
-        $out = ['success' => true, 'message' => $booking, 'code' => 200];
-        return response()->json($out, $out['code']);
+
+        if (!$booking) {
+            return response()->json(['success' => false, 'message' => 'Booking Tidak Ditemukan']);
+        }
+
+
+        $booking->image = $request->input('fileName');
+        $booking->save();
+
+        return response()->json(['success' => true, 'message' => $booking, 'code' => 200]);
     }
 
     public function getallbooking()
@@ -165,8 +175,10 @@ class BookingController extends Controller
             foreach ($completeBooking as $i => $value) {
                 $range2 = CarbonPeriod::create($value->date, $value->endDate);
                 if ($range->overlaps($range2)) {
-                    return response()->json(['success' => false,
-                        'message' => "Booking gagal di Accept, Karena lapangan sudah di booking."]);
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Booking gagal di Accept, Karena lapangan sudah di booking."
+                    ]);
                 }
             }
             $completeBooking = new BookingComplete;
@@ -276,5 +288,4 @@ class BookingController extends Controller
         $out = ['success' => true, 'message' => $completeBooking, 'code' => 200];
         return response()->json($out, $out['code']);
     }
-
 }
