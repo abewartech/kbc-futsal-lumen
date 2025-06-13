@@ -1,3 +1,5 @@
+<!-- GitAds-Verify: 8S4LA562WE3MXC5HR1P4GRF7273TG9RM -->
+
 # Lumen PHP Framework
 
 [![Build Status](https://travis-ci.org/laravel/lumen-framework.svg)](https://travis-ci.org/laravel/lumen-framework)
